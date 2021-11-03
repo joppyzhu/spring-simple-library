@@ -26,4 +26,10 @@ public interface DataService {
   @POST("/order/create")
   public Call<Order> createOrder(@Body Order order);
 
+  @GET("/order/{id}")
+  public Call<Order> getOrderById(@Path("id") Integer orderId);
+
+  @POST("/order/update")
+  public Call<Order> updateOrder(@Body Order order);
+
 }

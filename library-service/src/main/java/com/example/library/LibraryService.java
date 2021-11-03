@@ -3,6 +3,8 @@ package com.example.library;
 import com.example.library.fetch.DataService;
 import com.example.library.models.Book;
 import com.example.library.models.Order;
+import com.example.library.models.ReturnOrderRequest;
+import com.example.library.models.ReturnOrderResponse;
 import com.example.library.models.SearchRequest;
 import com.example.library.models.SearchResponse;
 import com.example.library.models.SubmitOrderRequest;
@@ -38,7 +40,7 @@ public class LibraryService {
     dataService = retrofit.create(DataService.class);
   }
 
-  public SearchResponse search(SearchRequest request) {
+  public SearchResponse searchBook(SearchRequest request) {
     SearchResponse response = new SearchResponse();
     if (request.getTitle() == null || request.getTitle().isEmpty()) {
       // No filter then get all
@@ -107,6 +109,52 @@ public class LibraryService {
         }
       } else {
         response.setMessage("Book out of order");
+      }
+    } catch (Exception e) {
+      response.setMessage("Failed connection");
+    }
+    return response;
+  }
+
+  public ReturnOrderResponse returnOrder(ReturnOrderRequest request) {
+    ReturnOrderResponse response = new ReturnOrderResponse();
+    response.setStatus("FAILED");
+    // 1. Get order detail
+    Call<Order> orderCall = dataService.getOrderById(request.getOrderId());
+    try {
+      Order order = orderCall.execute().body();
+      if (order.getStatus().equalsIgnoreCase("OPEN")) {
+        // 2. Get book info
+        Call<Book> bookCall = dataService.getBookById(order.getBookId());
+        try {
+          Book book = bookCall.execute().body();
+          book.setQty(book.getQty() + 1);
+          // 3. Add Qty Book
+          Call<Book> updatedBook = dataService.updateBook(book);
+          try {
+            updatedBook.execute();
+            // 4. Closed the order
+            order.setStatus("CLOSED");
+            Call<Order> updateOrderCall = dataService.updateOrder(order);
+            try {
+              Order orderResponse = updateOrderCall.execute().body();
+              if (orderResponse.getStatus().equalsIgnoreCase("CLOSED")) {
+                response.setStatus("SUCCESS");
+                response.setMessage("Thank you for returning the book");
+              } else {
+                response.setMessage("Something Wrong");
+              }
+            } catch (Exception e) {
+              response.setMessage("Failed connection");
+            }
+          } catch (Exception e) {
+            response.setMessage("Failed connection");
+          }
+        } catch (Exception e) {
+          response.setMessage("Failed connection");
+        }
+      } else {
+        response.setMessage("Order already closed");
       }
     } catch (Exception e) {
       response.setMessage("Failed connection");
