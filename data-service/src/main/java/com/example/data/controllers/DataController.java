@@ -36,8 +36,8 @@ public class DataController {
   }
 
   @PostMapping(value = "/book/search")
-  public List<Book> search(@RequestBody String title) {
-    return bookService.findByTitle(title);
+  public List<Book> search(@RequestBody Book book) {
+    return bookService.findByTitle(book.getTitle());
   }
 
   @PostMapping(value = "/book/create")
@@ -71,8 +71,8 @@ public class DataController {
   }
 
   @PostMapping(value = "/order/search")
-  public List<Order> searchOrder(@RequestBody String value) {
-    return orderService.findOrder(value);
+  public List<Order> searchOrder(@RequestBody Order order) {
+    return orderService.findOrder(order.getUsername());
   }
 
   @PostMapping(value = "/order/create")

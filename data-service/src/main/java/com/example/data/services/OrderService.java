@@ -26,7 +26,7 @@ public class OrderService {
   }
 
   public List<Order> findOrder(String value) {
-    List<Order> orderList = orderDao.findByUsernameContainingOrUserphone(value, value);
+    List<Order> orderList = orderDao.findByUsernameContaining(value);
     return orderList;
   }
 

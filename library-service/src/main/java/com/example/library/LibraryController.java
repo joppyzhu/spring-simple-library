@@ -1,6 +1,7 @@
 package com.example.library;
 
-import com.example.library.model.SearchRequest;
+import com.example.library.models.SearchRequest;
+import com.example.library.models.SearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ public class LibraryController {
   LibraryService libraryService;
 
   @PostMapping(value = "/search")
-  public List<String> search(@RequestBody SearchRequest request) {
+  public SearchResponse search(@RequestBody SearchRequest request) {
     return libraryService.search(request);
   }
 }
