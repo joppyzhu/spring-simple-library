@@ -11,13 +11,14 @@ We have 2 service:
  - Library Service: This service will handle request from user  
  - Data Service: This service will connect to database and serve other service to get data from database.
  
- Available process at Library Service:
+ Available process
+ Library Service:
   - Search book
   - Search order
   - Get detail order
   - Submit order
   - Return order (Return book)
-  - At Data Service: CRUD to table book and order
+ Data Service: CRUD to table book and order
   
  Documentation Link: http://localhost:8081/swagger-ui.html
  
