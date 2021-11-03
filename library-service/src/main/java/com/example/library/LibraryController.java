@@ -9,36 +9,41 @@ import com.example.library.models.SearchRequest;
 import com.example.library.models.SearchResponse;
 import com.example.library.models.SubmitOrderRequest;
 import com.example.library.models.SubmitOrderResponse;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@ApiOperation(value = "/", tags = "Library API Service")
 @RestController
 public class LibraryController {
   @Autowired
   LibraryService libraryService;
 
+  @ApiOperation(value = "Get and Search Book")
   @PostMapping(value = "/book")
   public SearchResponse searchBook(@RequestBody SearchRequest request) {
     return libraryService.searchBook(request);
   }
 
+  @ApiOperation(value = "Get and Search Order")
   @PostMapping(value = "/order")
   public SearchOrderResponse searchOrder(@RequestBody SearchOrderRequest request) {
     return libraryService.searchOrder(request);
   }
 
+  @ApiOperation(value = "Get Order Detail")
   @GetMapping(value = "/order/{orderId}")
   public OrderDetail orderDetail(@PathVariable Integer orderId) {
     return libraryService.getOrderDetail(orderId);
   }
 
+  @ApiOperation(value = "Submit Order")
   @PostMapping(value = "/submit-order")
   public SubmitOrderResponse submitOrder(@RequestBody SubmitOrderRequest request) {
     return libraryService.submitOrder(request);
   }
 
+  @ApiOperation(value = "Return Order")
   @PostMapping(value = "/return-order")
   public ReturnOrderResponse returnOrder(@RequestBody ReturnOrderRequest request) {
     return libraryService.returnOrder(request);
