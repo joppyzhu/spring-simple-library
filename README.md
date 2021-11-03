@@ -23,7 +23,8 @@ We have 2 service:
  
  Data Service: CRUD to table book and order
   
- Documentation Link: http://localhost:8081/swagger-ui.html
+ Documentation Link: http://localhost:8081/swagger-ui.html         
+ Postman collection: SimpleLibrary.postman_collection.json
  
  #### Database Design
  ```        
