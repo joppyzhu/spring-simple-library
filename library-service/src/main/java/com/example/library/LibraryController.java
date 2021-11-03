@@ -1,7 +1,10 @@
 package com.example.library;
 
+import com.example.library.models.OrderDetail;
 import com.example.library.models.ReturnOrderRequest;
 import com.example.library.models.ReturnOrderResponse;
+import com.example.library.models.SearchOrderRequest;
+import com.example.library.models.SearchOrderResponse;
 import com.example.library.models.SearchRequest;
 import com.example.library.models.SearchResponse;
 import com.example.library.models.SubmitOrderRequest;
@@ -19,6 +22,16 @@ public class LibraryController {
   @PostMapping(value = "/book")
   public SearchResponse searchBook(@RequestBody SearchRequest request) {
     return libraryService.searchBook(request);
+  }
+
+  @PostMapping(value = "/order")
+  public SearchOrderResponse searchOrder(@RequestBody SearchOrderRequest request) {
+    return libraryService.searchOrder(request);
+  }
+
+  @GetMapping(value = "/order/{orderId}")
+  public OrderDetail orderDetail(@PathVariable Integer orderId) {
+    return libraryService.getOrderDetail(orderId);
   }
 
   @PostMapping(value = "/submit-order")

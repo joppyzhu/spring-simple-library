@@ -3,8 +3,11 @@ package com.example.library;
 import com.example.library.fetch.DataService;
 import com.example.library.models.Book;
 import com.example.library.models.Order;
+import com.example.library.models.OrderDetail;
 import com.example.library.models.ReturnOrderRequest;
 import com.example.library.models.ReturnOrderResponse;
+import com.example.library.models.SearchOrderRequest;
+import com.example.library.models.SearchOrderResponse;
 import com.example.library.models.SearchRequest;
 import com.example.library.models.SearchResponse;
 import com.example.library.models.SubmitOrderRequest;
@@ -42,16 +45,15 @@ public class LibraryService {
 
   public SearchResponse searchBook(SearchRequest request) {
     SearchResponse response = new SearchResponse();
+    List<Book> bookList = new ArrayList<>();
     if (request.getTitle() == null || request.getTitle().isEmpty()) {
       // No filter then get all
       Call<List<Book>> callSync = dataService.getAllBook();
       try {
         Response<List<Book>> apiResponse = callSync.execute();
-        List<Book> bookList = apiResponse.body();
-        response.setBooks(bookList);
-        return response;
+        bookList = apiResponse.body();
       } catch (Exception ex) {
-        // Logger or do nothing
+        // Put some log
       }
     } else {
       // Use filter
@@ -60,12 +62,64 @@ public class LibraryService {
       Call<List<Book>> callSync = dataService.searchBook(filterBook);
       try {
         Response<List<Book>> apiResponse = callSync.execute();
-        List<Book> bookList = apiResponse.body();
-        response.setBooks(bookList);
-        return response;
+        bookList = apiResponse.body();
       } catch (Exception ex) {
-        // Logger or do nothing
+        // Put some log
       }
+    }
+    response.setBooks(bookList);
+    return response;
+  }
+
+  public SearchOrderResponse searchOrder(SearchOrderRequest request) {
+    SearchOrderResponse response = new SearchOrderResponse();
+    List<Order> orderList = new ArrayList<>();
+    if (request.getUsername() == null || request.getUsername().isEmpty()) {
+      // No filter then get all
+      Call<List<Order>> callSync = dataService.getAllOrder();
+      try {
+        Response<List<Order>> apiResponse = callSync.execute();
+        orderList = apiResponse.body();
+      } catch (Exception ex) {
+        // Put some log
+      }
+    } else {
+      // Use filter
+      Order filter = new Order();
+      filter.setUsername(request.getUsername());
+      Call<List<Order>> callSync = dataService.searchOrder(filter);
+      try {
+        Response<List<Order>> apiResponse = callSync.execute();
+        orderList = apiResponse.body();
+      } catch (Exception ex) {
+        // Put some log
+      }
+    }
+    response.setOrders(orderList);
+    return response;
+  }
+
+  public OrderDetail getOrderDetail(Integer orderId) {
+    OrderDetail response = new OrderDetail();
+    Call<Order> orderCall = dataService.getOrderById(orderId);
+    try {
+      Order order = orderCall.execute().body();
+      response.setOrderId(order.getOrderId());
+      response.setBookId(order.getBookId());
+      response.setUsername(order.getUsername());
+      response.setUserphone(order.getUserphone());
+      response.setStartDate(order.getStartDate());
+      response.setEndDate(order.getEndDate());
+      response.setStatus(order.getStatus());
+      Call<Book> bookCall = dataService.getBookById(order.getBookId());
+      try {
+        Book book = bookCall.execute().body();
+        response.setBookInfo(book);
+      } catch (Exception ex) {
+        // Put some log
+      }
+    } catch (Exception ex) {
+      // Put some log
     }
     return response;
   }

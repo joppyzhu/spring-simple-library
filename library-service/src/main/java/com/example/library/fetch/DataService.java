@@ -23,11 +23,17 @@ public interface DataService {
   @POST("/book/update")
   public Call<Book> updateBook(@Body Book book);
 
-  @POST("/order/create")
-  public Call<Order> createOrder(@Body Order order);
+  @GET("/order")
+  public Call<List<Order>> getAllOrder();
+
+  @POST("/order/search")
+  public Call<List<Order>> searchOrder(@Body Order book);
 
   @GET("/order/{id}")
   public Call<Order> getOrderById(@Path("id") Integer orderId);
+
+  @POST("/order/create")
+  public Call<Order> createOrder(@Body Order order);
 
   @POST("/order/update")
   public Call<Order> updateOrder(@Body Order order);
