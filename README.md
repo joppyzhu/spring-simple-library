@@ -2,7 +2,7 @@
 
 Java version: Java 11  
 Database: MySQL  
-Documentation: Swagger (https://swagger.io/) 
+Documentation: Swagger (https://swagger.io/)   
 HTTP Client: Retrofit (https://square.github.io/retrofit/)  
 
 #### Schema Service
