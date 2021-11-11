@@ -11,6 +11,8 @@ import com.example.library.models.SubmitOrderRequest;
 import com.example.library.models.SubmitOrderResponse;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @ApiOperation(value = "/", tags = "Library API Service")
@@ -21,8 +23,15 @@ public class LibraryController {
 
   @ApiOperation(value = "Get and Search Book")
   @PostMapping(value = "/book")
-  public SearchResponse searchBook(@RequestBody SearchRequest request) {
-    return libraryService.searchBook(request);
+  public ResponseEntity<SearchResponse> searchBook(@RequestBody SearchRequest request) {
+    SearchResponse response =  libraryService.searchBook(request);
+    if (response == null || response.getBooks().isEmpty()) {
+      response.setErrorCode("404");
+      response.setErrorMessage("Search not found");
+      return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    } else {
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    }
   }
 
   @ApiOperation(value = "Get and Search Order")

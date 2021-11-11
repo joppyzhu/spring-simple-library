@@ -27,7 +27,11 @@ public class BookService {
 
   public List<Book> findByTitle(String title) {
     List<Book> bookList = bookDao.findByTitleContaining(title);
-    return bookList;
+    if (bookList.isEmpty()) {
+      return null;
+    } else {
+      return bookList;
+    }
   }
 
   public Book findById(Integer id) {

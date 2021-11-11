@@ -60,6 +60,7 @@ public class LibraryService {
       Book filterBook = new Book();
       filterBook.setTitle(request.getTitle());
       Call<List<Book>> callSync = dataService.searchBook(filterBook);
+
       try {
         Response<List<Book>> apiResponse = callSync.execute();
         bookList = apiResponse.body();
