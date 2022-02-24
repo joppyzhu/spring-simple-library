@@ -15,7 +15,7 @@ import javax.persistence.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name="simplelibrary.order")
+@Entity(name="testing.order")
 public class Order implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

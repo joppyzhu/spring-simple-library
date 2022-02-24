@@ -12,7 +12,7 @@ public interface OrderDao extends CrudRepository<Order, Integer> {
 
   public List<Order> findByUsernameContaining(String username);
 
-  @Query(value = "SELECT * FROM simplelibrary.order WHERE order_id = :id", nativeQuery = true)
+  @Query(value = "SELECT * FROM testing.order WHERE order_id = :id", nativeQuery = true)
   public Order findOne(@Param("id") Integer id);
 
 }

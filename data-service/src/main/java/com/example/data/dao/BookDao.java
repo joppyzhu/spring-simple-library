@@ -12,7 +12,7 @@ public interface BookDao extends CrudRepository<Book, Integer> {
 
   public List<Book> findByTitleContaining(String title);
 
-  @Query(value = "SELECT * FROM simplelibrary.book WHERE book_id = :id", nativeQuery = true)
+  @Query(value = "SELECT * FROM testing.book WHERE book_id = :id", nativeQuery = true)
   public Book findOne(@Param("id") Integer id);
 
 }

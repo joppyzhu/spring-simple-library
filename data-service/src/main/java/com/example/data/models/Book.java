@@ -14,7 +14,7 @@ import javax.persistence.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name="simplelibrary.book")
+@Entity(name="testing.book")
 public class Book implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
