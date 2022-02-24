@@ -30,7 +30,7 @@ public class LibraryService {
 
   public LibraryService(@Value("${config.data-service.url}") String dataUrl) {
     OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC);
+    HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
     httpClient.addInterceptor(logging);
     Gson gson = new GsonBuilder()
         .setDateFormat("yyyy-MM-dd")
