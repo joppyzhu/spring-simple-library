@@ -1,14 +1,6 @@
 package com.example.library;
 
-import com.example.library.models.OrderDetail;
-import com.example.library.models.ReturnOrderRequest;
-import com.example.library.models.ReturnOrderResponse;
-import com.example.library.models.SearchOrderRequest;
-import com.example.library.models.SearchOrderResponse;
-import com.example.library.models.SearchRequest;
-import com.example.library.models.SearchResponse;
-import com.example.library.models.SubmitOrderRequest;
-import com.example.library.models.SubmitOrderResponse;
+import com.example.library.models.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +30,12 @@ public class LibraryController {
   @PostMapping(value = "/order")
   public SearchOrderResponse searchOrder(@RequestBody SearchOrderRequest request) {
     return libraryService.searchOrder(request);
+  }
+
+  @ApiOperation(value = "Get Book Detail")
+  @GetMapping(value = "/book/{bookId}")
+  public Book bookDetail(@PathVariable Integer bookId) {
+    return libraryService.getBookDetail(bookId);
   }
 
   @ApiOperation(value = "Get Order Detail")

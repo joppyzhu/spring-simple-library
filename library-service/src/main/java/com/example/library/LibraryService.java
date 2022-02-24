@@ -1,23 +1,18 @@
 package com.example.library;
 
 import com.example.library.fetch.DataService;
-import com.example.library.models.Book;
-import com.example.library.models.Order;
-import com.example.library.models.OrderDetail;
-import com.example.library.models.ReturnOrderRequest;
-import com.example.library.models.ReturnOrderResponse;
-import com.example.library.models.SearchOrderRequest;
-import com.example.library.models.SearchOrderResponse;
-import com.example.library.models.SearchRequest;
-import com.example.library.models.SearchResponse;
-import com.example.library.models.SubmitOrderRequest;
-import com.example.library.models.SubmitOrderResponse;
+import com.example.library.fetch.DataServiceAdaptor;
+import com.example.library.fetch.DataServiceRestAdaptor;
+import com.example.library.models.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -28,19 +23,49 @@ import java.util.List;
 
 @Service
 public class LibraryService {
-  private DataService dataService;
 
-  public LibraryService() {
+  private DataService dataService; // Using Retrofit
+  private DataServiceAdaptor dataServiceAdaptor; // Using WebClient
+  private DataServiceRestAdaptor dataServiceRestAdaptor; // Using RestTemplate
+
+  public LibraryService(@Value("${config.data-service.url}") String dataUrl) {
     OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC);
+    httpClient.addInterceptor(logging);
     Gson gson = new GsonBuilder()
         .setDateFormat("yyyy-MM-dd")
         .create();
     Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl("http://localhost:8080/")
+        .baseUrl(dataUrl)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .client(httpClient.build())
         .build();
     dataService = retrofit.create(DataService.class);
+    dataServiceAdaptor = new DataServiceAdaptor(WebClient.builder().baseUrl(dataUrl).build());
+    dataServiceRestAdaptor = new DataServiceRestAdaptor(dataUrl);
+  }
+
+  public Book getBookDetail(Integer bookId) {
+    if (bookId == 1) {
+      System.out.println("Call dataService.getBookById");
+      Call<Book> bookCall = dataService.getBookById(bookId);
+      System.out.println("End Call dataService.getBookById");
+      try {
+        return bookCall.execute().body();
+      } catch (Exception e) {
+        return null;
+      }
+    } else if (bookId == 2) {
+      System.out.println("Call dataServiceAdaptor.getBookById");
+      Mono<Book> bookMono = dataServiceAdaptor.getBookById(bookId);
+      System.out.println("End Call dataServiceAdaptor.getBookById");
+      return bookMono.block();
+    } else {
+      System.out.println("Call dataServiceRestAdaptor.getBookById");
+      Book book = dataServiceRestAdaptor.getBookById(bookId);
+      System.out.println("End Call dataServiceRestAdaptor.getBookById");
+      return book;
+    }
   }
 
   public SearchResponse searchBook(SearchRequest request) {
