@@ -3,7 +3,11 @@
 Java version: Java 11  
 Database: MySQL  
 Documentation: Swagger (https://swagger.io/)   
-HTTP Client: Retrofit (https://square.github.io/retrofit/)  
+HTTP Client: 
+- Retrofit (https://square.github.io/retrofit/)  
+- WebClient
+- RestTemplate
+Token Feature (Create & Validate): TOTP using JOTP (https://github.com/amdelamar/jotp)
 
 #### Schema Service
 

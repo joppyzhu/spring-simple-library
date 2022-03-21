@@ -3,6 +3,7 @@ package com.example.library;
 import com.example.library.models.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +35,8 @@ public class LibraryController {
 
   @ApiOperation(value = "Get Book Detail")
   @GetMapping(value = "/book/{bookId}")
-  public Book bookDetail(@PathVariable Integer bookId) {
-    return libraryService.getBookDetail(bookId);
+  public Book bookDetail(@RequestHeader HttpHeaders headers, @PathVariable Integer bookId) {
+    return libraryService.getBookDetail(headers, bookId);
   }
 
   @ApiOperation(value = "Get Order Detail")

@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -45,8 +46,24 @@ public class LibraryService {
     dataServiceRestAdaptor = new DataServiceRestAdaptor(dataUrl);
   }
 
-  public Book getBookDetail(Integer bookId) {
+  /*O
+  Testing the httpClient based on BookId
+   */
+  public Book getBookDetail(HttpHeaders httpHeaders, Integer bookId) {
     if (bookId == 1) {
+      // Use RestTemplate
+      System.out.println("Call dataServiceRestAdaptor.getBookById");
+      Book book = dataServiceRestAdaptor.getBookById(httpHeaders, bookId);
+      System.out.println("End Call dataServiceRestAdaptor.getBookById");
+      return book;
+    } else if (bookId == 2) {
+      // Use WebClient
+      System.out.println("Call dataServiceAdaptor.getBookById");
+      Mono<Book> bookMono = dataServiceAdaptor.getBookById(bookId);
+      System.out.println("End Call dataServiceAdaptor.getBookById");
+      return bookMono.block();
+    } else {
+      // Use Retrofit
       System.out.println("Call dataService.getBookById");
       Call<Book> bookCall = dataService.getBookById(bookId);
       System.out.println("End Call dataService.getBookById");
@@ -55,16 +72,6 @@ public class LibraryService {
       } catch (Exception e) {
         return null;
       }
-    } else if (bookId == 2) {
-      System.out.println("Call dataServiceAdaptor.getBookById");
-      Mono<Book> bookMono = dataServiceAdaptor.getBookById(bookId);
-      System.out.println("End Call dataServiceAdaptor.getBookById");
-      return bookMono.block();
-    } else {
-      System.out.println("Call dataServiceRestAdaptor.getBookById");
-      Book book = dataServiceRestAdaptor.getBookById(bookId);
-      System.out.println("End Call dataServiceRestAdaptor.getBookById");
-      return book;
     }
   }
 
@@ -241,4 +248,5 @@ public class LibraryService {
     }
     return response;
   }
+
 }

@@ -35,6 +35,11 @@ public class BookService {
   }
 
   public Book findById(Integer id) {
+    try {
+      Thread.sleep(10);
+    } catch (Exception e) {
+
+    }
     Book customer = bookDao.findOne(id);
     return customer;
   }
