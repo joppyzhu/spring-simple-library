@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import org.jeasy.random.EasyRandom;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -31,22 +33,20 @@ public class DataServiceRestAdaptor {
         this.dataBaseUrl = dataBaseUrl;
     }
 
-    public Book getBookById(HttpHeaders httpHeaders, Integer bookId) {
-        System.out.println("Starting BLOCKING Controller!");
-        String dataBaseUrl = "http://localhost:8080/";
+    public Book getBookById(HttpHeaders httpHeaders, Integer bookId, String requestId) {
         // Simple RestTemplate
-        /*ResponseEntity<Book> response = restTemplate.exchange(
-                this.dataBaseUrl + "book/" + bookId,
+        ResponseEntity<Book> response = restTemplate.exchange(
+                this.dataBaseUrl + "book/" + bookId + "/" + requestId,
                 HttpMethod.GET,
                 null,
                 Book.class);
-        System.out.println(response.getBody().toString());
-        System.out.println("Exiting BLOCKING Controller!");*/
-        //return response.getBody();
+        //System.out.println(response.getBody().toString());
+        //System.out.println("Exiting BLOCKING Controller!");
+        return response.getBody();
         // End Simple RestTemplate
 
         // RestTemplate with interceptors
-        EasyRandom generator = new EasyRandom();
+        /*EasyRandom generator = new EasyRandom();
         ApiContext apiContext = generator.nextObject(ApiContext.class);
         apiContext.setHttpHeaders(httpHeaders);
 
@@ -63,10 +63,8 @@ public class DataServiceRestAdaptor {
                 uriComponents.toUriString(),
                 Book.class).getBody();
         System.out.println(response2.toString());
-        return response2;
+        return response2;*/
         // End RestTemplate with interceptors
-
-
     }
 
     // From core-helper

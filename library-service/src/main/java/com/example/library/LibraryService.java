@@ -21,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class LibraryService {
@@ -31,8 +32,8 @@ public class LibraryService {
 
   public LibraryService(@Value("${config.data-service.url}") String dataUrl) {
     OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
-    httpClient.addInterceptor(logging);
+    //HttpLoggingInterceptor logging = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+    //httpClient.addInterceptor(logging);
     Gson gson = new GsonBuilder()
         .setDateFormat("yyyy-MM-dd")
         .create();
@@ -50,23 +51,31 @@ public class LibraryService {
   Testing the httpClient based on BookId
    */
   public Book getBookDetail(HttpHeaders httpHeaders, Integer bookId) {
+    String requestId = UUID.randomUUID().toString();
+    long startTime = System.currentTimeMillis();
     if (bookId == 1) {
       // Use RestTemplate
-      System.out.println("Call dataServiceRestAdaptor.getBookById");
-      Book book = dataServiceRestAdaptor.getBookById(httpHeaders, bookId);
-      System.out.println("End Call dataServiceRestAdaptor.getBookById");
+      System.out.println("[" + requestId + "] RestTemplate Start at  " + startTime);
+      Book book = dataServiceRestAdaptor.getBookById(httpHeaders, bookId, requestId);
+      long endTime = System.currentTimeMillis();
+      long diff = endTime - startTime;
+      System.out.println("[" + requestId + "] RestTemplate Finish at " + endTime + " (" + diff + "ms)");
       return book;
     } else if (bookId == 2) {
       // Use WebClient
-      System.out.println("Call dataServiceAdaptor.getBookById");
-      Mono<Book> bookMono = dataServiceAdaptor.getBookById(bookId);
-      System.out.println("End Call dataServiceAdaptor.getBookById");
+      System.out.println("[" + requestId + "] WebClient Start at  " + startTime);
+      Mono<Book> bookMono = dataServiceAdaptor.getBookById(bookId, requestId);
+      long endTime = System.currentTimeMillis();
+      long diff = endTime - startTime;
+      System.out.println("[" + requestId + "] WebClient Finish at " + endTime + " (" + diff + "ms)");
       return bookMono.block();
     } else {
       // Use Retrofit
-      System.out.println("Call dataService.getBookById");
-      Call<Book> bookCall = dataService.getBookById(bookId);
-      System.out.println("End Call dataService.getBookById");
+      System.out.println("[" + requestId + "] Retrofit Start at  " + startTime);
+      Call<Book> bookCall = dataService.getBookById(bookId, requestId);
+      long endTime = System.currentTimeMillis();
+      long diff = endTime - startTime;
+      System.out.println("[" + requestId + "] Retrofit Finish at " + endTime + " (" + diff + "ms)");
       try {
         return bookCall.execute().body();
       } catch (Exception e) {
@@ -91,7 +100,9 @@ public class LibraryService {
       // Use filter
       Book filterBook = new Book();
       filterBook.setTitle(request.getTitle());
+      System.out.println("Call dataService.searchBook");
       Call<List<Book>> callSync = dataService.searchBook(filterBook);
+      System.out.println("End call dataService.searchBook");
 
       try {
         Response<List<Book>> apiResponse = callSync.execute();
@@ -133,6 +144,7 @@ public class LibraryService {
   }
 
   public OrderDetail getOrderDetail(Integer orderId) {
+    String requestId = UUID.randomUUID().toString();
     OrderDetail response = new OrderDetail();
     Call<Order> orderCall = dataService.getOrderById(orderId);
     try {
@@ -144,7 +156,7 @@ public class LibraryService {
       response.setStartDate(order.getStartDate());
       response.setEndDate(order.getEndDate());
       response.setStatus(order.getStatus());
-      Call<Book> bookCall = dataService.getBookById(order.getBookId());
+      Call<Book> bookCall = dataService.getBookById(order.getBookId(), requestId);
       try {
         Book book = bookCall.execute().body();
         response.setBookInfo(book);
@@ -158,10 +170,11 @@ public class LibraryService {
   }
 
   public SubmitOrderResponse submitOrder(SubmitOrderRequest request) {
+    String requestId = UUID.randomUUID().toString();
     SubmitOrderResponse response = new SubmitOrderResponse();
     response.setStatus("FAILED");
     // 1. Get qty of book
-    Call<Book> bookCall = dataService.getBookById(request.getBookId());
+    Call<Book> bookCall = dataService.getBookById(request.getBookId(), requestId);
     try {
       // 2. If stock available then subtract qty
       Response<Book> apiResponse = bookCall.execute();
@@ -204,6 +217,7 @@ public class LibraryService {
   }
 
   public ReturnOrderResponse returnOrder(ReturnOrderRequest request) {
+    String requestId = UUID.randomUUID().toString();
     ReturnOrderResponse response = new ReturnOrderResponse();
     response.setStatus("FAILED");
     // 1. Get order detail
@@ -212,7 +226,7 @@ public class LibraryService {
       Order order = orderCall.execute().body();
       if (order.getStatus().equalsIgnoreCase("OPEN")) {
         // 2. Get book info
-        Call<Book> bookCall = dataService.getBookById(order.getBookId());
+        Call<Book> bookCall = dataService.getBookById(order.getBookId(), requestId);
         try {
           Book book = bookCall.execute().body();
           book.setQty(book.getQty() + 1);

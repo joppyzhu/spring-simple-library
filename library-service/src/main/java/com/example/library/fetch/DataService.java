@@ -17,8 +17,8 @@ public interface DataService {
   @POST("/book/search")
   public Call<List<Book>> searchBook(@Body Book book);
 
-  @GET("/book/{id}")
-  public Call<Book> getBookById(@Path("id") Integer bookId);
+  @GET("/book/{id}/{requestId}")
+  public Call<Book> getBookById(@Path("id") Integer bookId, @Path("requestId") String requestId);
 
   @POST("/book/update")
   public Call<Book> updateBook(@Body Book book);

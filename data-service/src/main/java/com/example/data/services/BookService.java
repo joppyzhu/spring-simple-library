@@ -36,7 +36,7 @@ public class BookService {
 
   public Book findById(Integer id) {
     try {
-      Thread.sleep(10);
+      Thread.sleep(500);
     } catch (Exception e) {
 
     }
@@ -51,6 +51,8 @@ public class BookService {
   public Book update(Book book) {
     Book bookTemp = bookDao.findOne(book.getBookId());
     Util.copyNonNullProperties(book, bookTemp);
+    bookDao.save(bookTemp);
+    bookTemp.setQty(bookTemp.getQty());
     return bookDao.save(bookTemp);
   }
 

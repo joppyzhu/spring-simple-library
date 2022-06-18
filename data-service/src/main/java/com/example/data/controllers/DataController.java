@@ -4,6 +4,7 @@ import com.example.data.models.Book;
 import com.example.data.models.Order;
 import com.example.data.services.BookService;
 import com.example.data.services.OrderService;
+import com.example.data.services.TestingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,8 @@ public class DataController {
   private BookService bookService;
   @Autowired
   private OrderService orderService;
+  @Autowired
+  private TestingService testingService;
 
   @GetMapping(value = "/book")
   public List<Book> findAll() {
@@ -30,9 +33,15 @@ public class DataController {
     return bookService.count();
   }
 
-  @GetMapping(value = "/book/{id}")
-  public Book findById(@PathVariable Integer id) {
-    return bookService.findById(id);
+  @GetMapping(value = "/book/{id}/{requestId}")
+  public Book findById(@PathVariable Integer id, @PathVariable String requestId) {
+    long startTime = System.currentTimeMillis();
+    System.out.println("[" + requestId + "] Start get the book at  " + startTime);
+    Book result = bookService.findById(id);
+    long endTime = System.currentTimeMillis();
+    long diff = endTime - startTime;
+    System.out.println("[" + requestId + "] Finish get the book at " + endTime + " (" + diff + "ms)");
+    return result;
   }
 
   @PostMapping(value = "/book/search")
@@ -88,5 +97,10 @@ public class DataController {
   @PostMapping(value = "/order/delete")
   public void deleteOrder(@RequestBody Order order) {
     orderService.delete(order.getOrderId());
+  }
+
+  @GetMapping(value = "/testing")
+  public long testingTable() {
+    return testingService.run();
   }
 }

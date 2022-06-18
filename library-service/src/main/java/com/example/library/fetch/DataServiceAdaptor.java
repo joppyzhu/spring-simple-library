@@ -16,18 +16,18 @@ public class DataServiceAdaptor {
         this.dataClient = dataClient;
     }
 
-    public Mono<Book> getBookById(Integer bookId) {
-        System.out.println("Starting NON-BLOCKING Controller!");
+    public Mono<Book> getBookById(Integer bookId, String requestId) {
+        //System.out.println("Starting NON-BLOCKING Controller!");
         Mono<Book> response = dataClient
                 .get()
-                .uri("book/" + bookId)
+                .uri("book/" + bookId + "/" + requestId)
                 .retrieve()
                 .bodyToMono(Book.class)
                 .cache(Duration.ofMinutes(1));
         response.subscribe(order -> {
-            System.out.println(order.toString());
+            //System.out.println(order.toString());
         });
-        System.out.println("Exiting NON-BLOCKING Controller!");
+        //System.out.println("Exiting NON-BLOCKING Controller!");
         return response;
     }
 }
